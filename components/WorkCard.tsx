@@ -2,7 +2,6 @@
 
 import { useRef, useState, useEffect } from "react";
 import { AuraCard } from "./AuraCard";
-import { burstEmoji } from "@/lib/emoji-burst";
 
 interface Props {
   aura: string;
@@ -29,6 +28,7 @@ export function WorkCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLVideoElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const dismissed = useRef(false);
 
   const slug = kind.toLowerCase().replace(/ /g, "-");
   const computedSrc = `videos/${slug}-${num}.mp4`;
@@ -40,22 +40,20 @@ export function WorkCard({
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Mobile scroll-driven auto-flip
+  // Scroll-driven auto-flip for all devices
   useEffect(() => {
-    if (!isMobile) {
-      setFlipped(false);
-      return;
-    }
     const check = () => {
       if (!cardRef.current) return;
       const r = cardRef.current.getBoundingClientRect();
-      const center = (r.top + r.bottom) / 2;
-      const vc = window.innerHeight / 2;
       const inFocus =
-        Math.abs(center - vc) < window.innerHeight * 0.28 &&
-        r.top < window.innerHeight &&
-        r.bottom > 0;
-      setFlipped(inFocus);
+        r.top < window.innerHeight * 0.85 &&
+        r.bottom > window.innerHeight * 0.15;
+      if (!inFocus) {
+        dismissed.current = false;
+        setFlipped(false);
+      } else if (!dismissed.current) {
+        setFlipped(true);
+      }
     };
     check();
     window.addEventListener("scroll", check, { passive: true });
@@ -64,7 +62,7 @@ export function WorkCard({
       window.removeEventListener("scroll", check);
       window.removeEventListener("resize", check);
     };
-  }, [isMobile]);
+  }, []);
 
   // Hover preview (desktop)
   useEffect(() => {
@@ -87,24 +85,16 @@ export function WorkCard({
     }
   }, [flipped, videoError]);
 
-  const handleClick = (e: React.MouseEvent) => {
-    if (flipped || isMobile) return;
-    e.stopPropagation();
-    burstEmoji(
-      e.clientX,
-      e.clientY,
-      kind.includes("GEN")
-        ? "spark"
-        : kind.includes("SHORT")
-          ? "fire"
-          : "media",
-      6,
-    );
-    setFlipped(true);
+  const handleClick = () => {
+    if (!flipped && !dismissed.current) {
+      dismissed.current = true;
+      setFlipped(true);
+    }
   };
 
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
+    dismissed.current = true;
     setFlipped(false);
   };
 
@@ -161,7 +151,7 @@ export function WorkCard({
             </div>
           </div>
 
-          <div className="tap-hint-mini">{isMobile ? "scroll" : "tap"}</div>
+          <div className="tap-hint-mini">scroll</div>
           <div className="tap-hint">play</div>
         </AuraCard>
       </div>
@@ -175,7 +165,7 @@ export function WorkCard({
             ref={videoRef}
             src={computedSrc}
             controls={!isMobile}
-            muted={isMobile}
+            muted
             loop={isMobile}
             playsInline
             preload="metadata"
