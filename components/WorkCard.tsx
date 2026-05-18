@@ -86,7 +86,7 @@ export function WorkCard({
   }, [flipped, videoError]);
 
   const handleClick = () => {
-    if (!flipped && !dismissed.current) {
+    if (!flipped) {
       dismissed.current = true;
       setFlipped(true);
     }
@@ -164,7 +164,7 @@ export function WorkCard({
           <video
             ref={videoRef}
             src={computedSrc}
-            controls={!isMobile}
+            controls
             muted
             loop={isMobile}
             playsInline
