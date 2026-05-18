@@ -241,6 +241,14 @@ html[data-palette="cosmic"] .nav-links a:hover {
   margin: 0 0.18em 0 0.1em;
   display: inline-block;
 }
+.hero h1 em.serif-i.shimmer {
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  color: var(--accent);
+  -webkit-text-fill-color: var(--accent);
+  animation: none;
+}
 
 .hero .sub {
   font-size: clamp(15px, 1.3vw, 19px);
