@@ -175,20 +175,8 @@ export function WorkCard({
         ) : (
           <div className="video-placeholder">
             <div className="play-big" />
-            <div>
-              <div
-                style={{
-                  color: "#fff",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  marginBottom: 6,
-                }}
-              >
-                {title}
-              </div>
-              add your file at
-              <br />
-              <span style={{ opacity: 0.6, fontSize: 11 }}>{computedSrc}</span>
+            <div style={{ color: "#fff", fontSize: 14, fontWeight: 600 }}>
+              {title}
             </div>
           </div>
         )}
