@@ -31,10 +31,7 @@ export function WorkCard({
   const dismissed = useRef(false);
 
   const slug = kind.toLowerCase().replace(/ /g, "-");
-  const computedSrc =
-    slug === "long-form"
-      ? `https://pub-66fb2bc9cb4a45109700f2328e0db1ce.r2.dev/${slug}-${num}.mp4`
-      : `/videos/${slug}-${num}.mp4`;
+  const computedSrc = `/videos/${slug}-${num}.mp4`;
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 720);
