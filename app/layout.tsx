@@ -39,11 +39,20 @@ export const metadata: Metadata = {
     url: "https://kartavyagupta.com",
     siteName: "Kartavya Gupta",
     type: "website",
+    images: [
+      {
+        url: "/og/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Kartavya Gupta — Content Strategist",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Kartavya Gupta — Content Strategist",
     description: "A strategist who can actually execute.",
+    images: ["/og/og.jpg"],
   },
 };
 
