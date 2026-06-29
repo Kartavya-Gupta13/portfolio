@@ -21,6 +21,7 @@ export function WorkCard({
   revealDelay = 0,
 }: Props) {
   const [flipped, setFlipped] = useState(false);
+  const [hasFlipped, setHasFlipped] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [hovering, setHovering] = useState(false);
@@ -32,6 +33,7 @@ export function WorkCard({
 
   const slug = kind.toLowerCase().replace(/ /g, "-");
   const computedSrc = `/videos/${slug}-${num}.mp4`;
+  const poster = `/images/posters/${slug}-${num}.jpg`;
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 720);
@@ -67,13 +69,18 @@ export function WorkCard({
   // Hover preview (desktop)
   useEffect(() => {
     if (isMobile || !previewRef.current) return;
-    if (hovering && previewLoaded && !videoError) {
+    if (hovering && !videoError) {
       previewRef.current.play().catch(() => {});
     } else {
       previewRef.current.pause();
       previewRef.current.currentTime = 0.05;
     }
   }, [hovering, previewLoaded, isMobile, videoError]);
+
+  // Mount back-face video lazily on first flip
+  useEffect(() => {
+    if (flipped) setHasFlipped(true);
+  }, [flipped]);
 
   // Back-face video
   useEffect(() => {
@@ -116,10 +123,11 @@ export function WorkCard({
               ref={previewRef}
               className="video-preview"
               src={computedSrc}
+              poster={poster}
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
               onLoadedData={() => setPreviewLoaded(true)}
               onError={() => setVideoError(true)}
               style={{ opacity: previewVisible ? 1 : 0 }}
@@ -160,15 +168,23 @@ export function WorkCard({
         <button className="close" onClick={handleClose} aria-label="Close">
           ×
         </button>
-        {!videoError ? (
+        {videoError ? (
+          <div className="video-placeholder">
+            <div className="play-big" />
+            <div style={{ color: "#fff", fontSize: 14, fontWeight: 600 }}>
+              {title}
+            </div>
+          </div>
+        ) : hasFlipped ? (
           <video
             ref={videoRef}
             src={computedSrc}
+            poster={poster}
             controls
             muted
             loop={isMobile}
             playsInline
-            preload="metadata"
+            preload="none"
             onError={() => setVideoError(true)}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
