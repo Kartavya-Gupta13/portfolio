@@ -103,6 +103,20 @@ body {
   color: var(--bg);
 }
 
+/* ── Focus rings ── */
+:focus-visible {
+  outline: 2.5px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.nav-links a:focus-visible,
+.cta:focus-visible,
+.contact-link:focus-visible {
+  outline: 2.5px solid var(--accent);
+  outline-offset: 5px;
+  border-radius: 999px;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -323,6 +337,10 @@ html[data-palette="cosmic"] .nav-links a:hover {
 }
 .cta:hover {
   transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 8px 24px rgba(28, 19, 12, 0.18),
+    0 0 0 4px var(--paper),
+    0 0 36px -4px color-mix(in oklch, var(--accent) 55%, transparent);
 }
 .cta .arrow {
   width: 22px;
@@ -743,7 +761,8 @@ html[data-palette="cosmic"] .nav-links a:hover {
   box-shadow:
     0 30px 80px rgba(28, 19, 12, 0.18),
     0 0 0 8px rgba(255, 255, 255, 0.5),
-    0 0 0 9px var(--line);
+    0 0 0 9px var(--line),
+    0 0 80px 24px color-mix(in oklch, var(--accent-2) 28%, transparent);
   transform: rotate(-2deg);
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -785,7 +804,11 @@ html[data-palette="cosmic"] .nav-links a:hover {
   margin-bottom: 28px;
 }
 .about-text h2 em.serif-i {
-  color: var(--accent);
+  background: linear-gradient(125deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 .about-text p {
   font-size: clamp(16px, 1.3vw, 19px);
@@ -810,6 +833,16 @@ html[data-palette="cosmic"] .nav-links a:hover {
   backdrop-filter: blur(8px);
   border: 0.5px solid var(--line);
   color: var(--ink);
+  transition:
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.2s,
+    background 0.2s;
+}
+.skill-chip:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: color-mix(in oklch, var(--accent) 14%, var(--paper));
+  box-shadow: 0 6px 18px -3px
+    color-mix(in oklch, var(--accent) 30%, transparent);
 }
 
 /* ── Work sections ── */
@@ -842,7 +875,11 @@ html[data-palette="cosmic"] .nav-links a:hover {
   line-height: 0.88;
 }
 .work-head h2 em.serif-i {
-  color: var(--accent);
+  background: linear-gradient(125deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
   font-size: 1.02em;
 }
 .work-head .meta {
@@ -882,6 +919,11 @@ html[data-palette="cosmic"] .nav-links a:hover {
 }
 .work-card:hover:not(.flipped) {
   transform: translateY(-8px) rotateX(2deg);
+}
+.work-card:hover:not(.flipped) .face.front {
+  box-shadow: 0 24px 52px -8px
+    color-mix(in oklch, var(--accent) 40%, transparent);
+  transition: box-shadow 0.3s ease;
 }
 
 .work-card .face {
@@ -985,6 +1027,23 @@ html[data-palette="cosmic"] .nav-links a:hover {
   max-width: 720px;
   margin: 0 auto;
 }
+.contact-inner::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 640px;
+  height: 480px;
+  background: radial-gradient(
+    ellipse at 50% 35%,
+    color-mix(in oklch, var(--accent) 18%, transparent) 0%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: -1;
+}
 .contact h2 {
   font-size: clamp(48px, 8vw, 120px);
   letter-spacing: -0.045em;
@@ -1027,7 +1086,9 @@ html[data-palette="cosmic"] .nav-links a:hover {
 }
 .contact-link:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 28px rgba(28, 19, 12, 0.12);
+  box-shadow:
+    0 12px 28px rgba(28, 19, 12, 0.1),
+    0 0 28px -4px color-mix(in oklch, var(--accent) 45%, transparent);
 }
 .contact-link svg {
   width: 18px;
@@ -1040,6 +1101,12 @@ footer {
   font-size: 12px;
   color: var(--ink-3);
   letter-spacing: 0.04em;
+  border-top: 0.5px solid var(--line);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklch, var(--bg-2) 40%, transparent)
+  );
 }
 footer .crane-foot {
   width: 60px;
@@ -1419,8 +1486,25 @@ html[data-palette="cosmic"] .nav-palette {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Kill animations */
   .float-card,
-  .mascot .body {
+  .mascot .body,
+  .shimmer,
+  .wiggle,
+  .dance-word > .dance-l,
+  .floater,
+  .hero-name .ping,
+  .nav-brand .dot {
     animation: none !important;
+  }
+
+  /* Kill transitions */
+  .work-card,
+  .work-card .face,
+  .skill-chip,
+  .cta,
+  .contact-link,
+  .about-photo {
+    transition: none !important;
   }
 }
