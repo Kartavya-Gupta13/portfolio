@@ -22,10 +22,13 @@ export function WorkCard({
 }: Props) {
   const [flipped, setFlipped] = useState(false);
   const [hasFlipped, setHasFlipped] = useState(false);
-  const [videoError, setVideoError] = useState(false);
+  const [previewError, setPreviewError] = useState(false);
+  const [fullVideoError, setFullVideoError] = useState(false);
   const [previewLoaded, setPreviewLoaded] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [nearViewport, setNearViewport] = useState(false);
+  const [previewPreload, setPreviewPreload] = useState<"none" | "auto">("none");
   const cardRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLVideoElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -33,6 +36,7 @@ export function WorkCard({
 
   const slug = kind.toLowerCase().replace(/ /g, "-");
   const computedSrc = `/videos/${slug}-${num}.mp4`;
+  const previewSrc = `/videos/previews/${slug}-${num}.mp4`;
   const poster = `/images/posters/${slug}-${num}.jpg`;
 
   useEffect(() => {
@@ -69,28 +73,88 @@ export function WorkCard({
   // Hover preview (desktop)
   useEffect(() => {
     if (isMobile || !previewRef.current) return;
-    if (hovering && !videoError) {
+    if (hovering && !previewError) {
       previewRef.current.play().catch(() => {});
     } else {
       previewRef.current.pause();
       previewRef.current.currentTime = 0.05;
     }
-  }, [hovering, previewLoaded, isMobile, videoError]);
+  }, [hovering, previewLoaded, isMobile, previewError]);
 
-  // Mount back-face video lazily on first flip
+  // Mount back-face video lazily once flipped or near viewport
   useEffect(() => {
-    if (flipped) setHasFlipped(true);
-  }, [flipped]);
+    if (flipped || nearViewport) setHasFlipped(true);
+  }, [flipped, nearViewport]);
 
   // Back-face video
   useEffect(() => {
     if (!videoRef.current) return;
-    if (flipped && !videoError) {
+    if (flipped && !fullVideoError) {
       videoRef.current.play().catch(() => {});
     } else {
       videoRef.current.pause();
     }
-  }, [flipped, videoError]);
+  }, [flipped, fullVideoError]);
+
+  // IntersectionObserver — pre-mount back video when card is near viewport
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNearViewport(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  // Idle-preload preview on desktop when page is idle
+  useEffect(() => {
+    if (isMobile) return;
+    if (
+      (navigator as { connection?: { saveData?: boolean } }).connection
+        ?.saveData
+    )
+      return;
+
+    type RIC = (cb: () => void, opts?: { timeout: number }) => number;
+    const ric = (window as Window & { requestIdleCallback?: RIC })
+      .requestIdleCallback;
+
+    let ricHandle: number | undefined;
+    let timerHandle: ReturnType<typeof setTimeout> | undefined;
+
+    const doPreload = () => {
+      if (ric) {
+        ricHandle = ric(() => setPreviewPreload("auto"), { timeout: 5000 });
+      } else {
+        timerHandle = setTimeout(() => setPreviewPreload("auto"), 2000);
+      }
+    };
+
+    if (document.readyState === "complete") {
+      doPreload();
+    } else {
+      window.addEventListener("load", doPreload, { once: true });
+    }
+
+    return () => {
+      window.removeEventListener("load", doPreload);
+      if (ricHandle !== undefined) {
+        (
+          window as Window & { cancelIdleCallback?: (id: number) => void }
+        ).cancelIdleCallback?.(ricHandle);
+      }
+      if (timerHandle !== undefined) {
+        clearTimeout(timerHandle);
+      }
+    };
+  }, [isMobile]);
 
   const handleClick = () => {
     if (!flipped) {
@@ -105,7 +169,8 @@ export function WorkCard({
     setFlipped(false);
   };
 
-  const previewVisible = !isMobile && hovering && previewLoaded && !videoError;
+  const previewVisible =
+    !isMobile && hovering && previewLoaded && !previewError;
 
   return (
     <div
@@ -118,18 +183,18 @@ export function WorkCard({
     >
       <div className="face front">
         <AuraCard aura={aura} num={num} kind={kind} total={4}>
-          {!isMobile && !videoError && (
+          {!isMobile && !previewError && (
             <video
               ref={previewRef}
               className="video-preview"
-              src={computedSrc}
+              src={previewSrc}
               poster={poster}
               muted
               loop
               playsInline
-              preload="none"
+              preload={previewPreload}
               onLoadedData={() => setPreviewLoaded(true)}
-              onError={() => setVideoError(true)}
+              onError={() => setPreviewError(true)}
               style={{ opacity: previewVisible ? 1 : 0 }}
             />
           )}
@@ -168,7 +233,7 @@ export function WorkCard({
         <button className="close" onClick={handleClose} aria-label="Close">
           ×
         </button>
-        {videoError ? (
+        {fullVideoError ? (
           <div className="video-placeholder">
             <div className="play-big" />
             <div style={{ color: "#fff", fontSize: 14, fontWeight: 600 }}>
@@ -184,8 +249,8 @@ export function WorkCard({
             muted
             loop={isMobile}
             playsInline
-            preload="none"
-            onError={() => setVideoError(true)}
+            preload="metadata"
+            onError={() => setFullVideoError(true)}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (

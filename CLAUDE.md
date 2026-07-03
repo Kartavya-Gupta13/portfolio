@@ -102,7 +102,7 @@ type Project = {
 - Encode all videos in `public/videos/` as **H.264** (never AV1/VP9) — AV1 has no hardware decode on Safari/iOS/older Macs and stutters or fails.
 - Cap at **1080p, 30fps**, always `-movflags +faststart` (moov atom up front so playback/seek start immediately). Use `crf 28–30` — files render in small cards, not fullscreen. Target ≤~15MB per clip.
 - `ffmpeg-static` is a devDependency for local transcoding (resolve path via `require('ffmpeg-static')`); do NOT add it to `pnpm-workspace.yaml` allowBuilds (it breaks `pnpm dev`/`pnpm lint`).
-- In `WorkCard.tsx`: every `<video>` gets `preload="none"` + a `poster` (frame stills in `public/images/posters/{slug}-{num}.jpg`); the back-face video lazy-mounts on first flip. Page must fetch only posters on load — no `.mp4` until hover/flip.
+- Front preview uses `/videos/previews/{slug}-{n}.mp4` (4s, 540p, silent, crf 32); previews idle-preload (`preload="auto"` via requestIdleCallback after window load) on desktop only, skipped when `navigator.connection.saveData`; back-face video mounts with `preload="metadata"` once card is within 200px of viewport (IntersectionObserver); mobile ≤720px fetches zero video bytes on page load; run `node scripts/encode-previews.mjs` after adding new source videos.
 
 ## OG / link previews
 
