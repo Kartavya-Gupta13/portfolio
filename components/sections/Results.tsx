@@ -35,10 +35,14 @@ function DownArrow() {
 }
 
 /**
- * Analytics clip. Rendered with no `src` and `preload="none"` so nothing is
- * fetched until it is nearly on screen; `muted`/`loop`/`playsInline` are set
- * imperatively because React drops them as JSX attributes and iOS Safari
- * refuses to autoplay without the real `muted` attribute.
+ * Analytics clip. The poster paints the frame immediately, so the shell is
+ * never an empty box while bytes are in flight. The source is faststart H.264
+ * with no audio track, so it starts on the first chunk: the src is attached
+ * as soon as the card is within 600px of the viewport (and idle-preloaded on
+ * desktop after load), rather than waiting for the card to actually appear.
+ * `muted`/`loop`/`playsInline` are set imperatively because React drops them
+ * as JSX attributes and iOS Safari refuses to autoplay without the real
+ * `muted` attribute.
  */
 function AnalyticsVideo() {
   const ref = useRef<HTMLVideoElement>(null);
@@ -60,30 +64,58 @@ function AnalyticsVideo() {
     if (conn?.saveData || conn?.effectiveType === "2g") return;
 
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const attach = () => {
+      if (!el.src) el.src = results.video.src;
+    };
 
+    // Attach well before the clip scrolls in so the fetch overlaps the scroll.
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          if (!el.src) el.src = results.video.src;
+          attach();
           if (!still) el.play().catch(() => {});
         } else {
           el.pause();
         }
       },
-      { rootMargin: "300px 0px" },
+      { rootMargin: "600px 0px" },
     );
     io.observe(el);
 
-    return () => io.disconnect();
+    // Desktop: warm the clip once the page is idle, same as the card previews.
+    let cancelWarm: (() => void) | undefined;
+    const warm = () => {
+      if (window.innerWidth <= 720) return;
+      const w = window as Window & {
+        requestIdleCallback?: (cb: () => void) => number;
+        cancelIdleCallback?: (id: number) => void;
+      };
+      if (w.requestIdleCallback && w.cancelIdleCallback) {
+        const id = w.requestIdleCallback(attach);
+        cancelWarm = () => w.cancelIdleCallback!(id);
+      } else {
+        const id = window.setTimeout(attach, 1200);
+        cancelWarm = () => window.clearTimeout(id);
+      }
+    };
+    if (document.readyState === "complete") warm();
+    else window.addEventListener("load", warm, { once: true });
+
+    return () => {
+      io.disconnect();
+      window.removeEventListener("load", warm);
+      cancelWarm?.();
+    };
   }, []);
 
   return (
     <div className="results-video-shell">
       <video
         ref={ref}
+        poster={results.video.poster}
         width={results.video.width}
         height={results.video.height}
-        preload="none"
+        preload="metadata"
       />
     </div>
   );

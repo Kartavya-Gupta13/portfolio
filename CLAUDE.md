@@ -103,6 +103,10 @@ type Project = {
 - Cap at **1080p, 30fps**, always `-movflags +faststart` (moov atom up front so playback/seek start immediately). Use `crf 28–30` — files render in small cards, not fullscreen. Target ≤~15MB per clip.
 - `ffmpeg-static` is a devDependency for local transcoding (resolve path via `require('ffmpeg-static')`); do NOT add it to `pnpm-workspace.yaml` allowBuilds (it breaks `pnpm dev`/`pnpm lint`).
 - Front preview uses `/videos/previews/{slug}-{n}.mp4` (4s, 540p, silent, crf 32); previews idle-preload (`preload="auto"` via requestIdleCallback after window load) on desktop only, skipped when `navigator.connection.saveData`; back-face video mounts with `preload="metadata"` once card is within 200px of viewport (IntersectionObserver); mobile ≤720px fetches zero video bytes on page load; run `node scripts/encode-previews.mjs` after adding new source videos.
+- Every video needs a poster (`/images/posters/{slug}.jpg`) so the frame paints before any bytes land — including the Results analytics clip (`/images/posters/results.jpg`).
+- Verify `moov` is the first atom after `ftyp` before shipping any clip — a trailing `moov` forces the browser to download the whole file before playback starts. Check with a top-level atom dump, not by trusting the encode flags.
+- Strip audio (`-an`) from every clip on the site; they all play muted, and a stray AAC track was ~30% of `results.mp4`.
+- Text-heavy screen recordings (the analytics clip) use `crf 24`, not 28–30 — small dashboard numbers smear at 28.
 
 ## Layout gotchas
 

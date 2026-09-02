@@ -77,7 +77,12 @@ export const results = {
   ],
 
   videoLabel: "Analytics",
-  video: { src: "/videos/results.mp4", width: 600, height: 600 },
+  video: {
+    src: "/videos/results.mp4",
+    poster: "/images/posters/results.jpg",
+    width: 600,
+    height: 600,
+  },
 
   processLabel: "How I work together with you",
   process: [
