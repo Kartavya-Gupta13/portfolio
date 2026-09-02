@@ -93,6 +93,10 @@ body {
 
 body {
   min-height: 100vh;
+  /* containing block for the grain overlay — without it the mobile
+     `position: absolute; height: 100%` grain resolves against the initial
+     containing block and only covers the first viewport of the page */
+  position: relative;
   background:
     radial-gradient(ellipse 80% 60% at 20% 0%, var(--bg-2) 0%, transparent 55%),
     radial-gradient(
