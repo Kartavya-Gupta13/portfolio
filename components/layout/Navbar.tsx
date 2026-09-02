@@ -18,6 +18,7 @@ export function Navbar({ palette, onPalette }: Props) {
           <a href="#long-form">long form</a>
           <a href="#short-form">short form</a>
           <a href="#gen-ai">gen ai</a>
+          <a href="#results">results</a>
           <a href="#contact">contact</a>
         </div>
         <div className="nav-palette" role="group" aria-label="Palette">

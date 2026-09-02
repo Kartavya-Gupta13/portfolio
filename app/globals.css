@@ -14,8 +14,13 @@
   --ink-3: #9a8676;
   --accent: oklch(74% 0.16 50);
   --accent-2: oklch(74% 0.16 290);
+  /* accent at text contrast — the display accent is too light to read at 10px */
+  --accent-ink: oklch(60% 0.16 50);
   --line: rgba(28, 19, 12, 0.12);
+  --line-2: rgba(28, 19, 12, 0.2);
   --paper: rgba(255, 251, 244, 0.7);
+  /* letterbox behind the analytics clip — stays dark in every palette */
+  --video-mat: #1c130c;
 
   --aura-peach-1: #ffc9a8;
   --aura-peach-2: #ff9b7a;
@@ -46,7 +51,9 @@ html[data-palette="cosmic"] {
   --ink-3: #6a5a85;
   --accent: oklch(80% 0.18 290);
   --accent-2: oklch(80% 0.18 190);
+  --accent-ink: oklch(88% 0.14 290);
   --line: rgba(244, 238, 255, 0.14);
+  --line-2: rgba(244, 238, 255, 0.22);
   --paper: rgba(30, 22, 50, 0.6);
 }
 
@@ -59,7 +66,9 @@ html[data-palette="cream"] {
   --ink-3: #8a7a60;
   --accent: oklch(68% 0.22 35);
   --accent-2: oklch(40% 0.05 50);
+  --accent-ink: oklch(52% 0.2 35);
   --line: rgba(14, 10, 6, 0.14);
+  --line-2: rgba(14, 10, 6, 0.22);
   --paper: rgba(255, 251, 244, 0.7);
 }
 
@@ -77,7 +86,9 @@ body {
   font-feature-settings: "ss01", "ss02";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  /* `clip` not `hidden` — `hidden` makes html/body scroll containers, which
+     breaks the viewport-relative `position: sticky` in the results section */
+  overflow-x: clip;
 }
 
 body {
@@ -1312,6 +1323,232 @@ html[data-palette="cosmic"] .nav-palette {
   background: linear-gradient(135deg, #1a1a1a, #ff5722);
 }
 
+/* ── Results ── */
+.results-head {
+  margin-bottom: 56px;
+}
+.results-head h2 em.serif-i {
+  /* clears the italic overhang before the period */
+  margin-right: 0.08em;
+}
+
+/* Rail label + dashed rule */
+.results-rail {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.results-rail-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.results-rail-line {
+  flex: 1;
+  height: 0;
+  border-top: 0.5px dashed var(--line-2);
+}
+
+/* Stat cards */
+.results-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 96px;
+}
+.results-stat {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  padding: 44px 24px;
+  text-align: center;
+  background: var(--paper);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 0.5px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 12px 40px rgba(28, 19, 12, 0.07);
+}
+.results-aura {
+  position: absolute;
+  inset: 0;
+  filter: blur(26px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.results-aura.sunset {
+  background:
+    radial-gradient(circle at 30% 20%, var(--aura-peach-1), transparent 62%),
+    radial-gradient(circle at 78% 82%, var(--aura-rose-1), transparent 58%);
+}
+.results-aura.violet {
+  background:
+    radial-gradient(circle at 30% 20%, var(--aura-lav-1), transparent 62%),
+    radial-gradient(circle at 78% 82%, var(--aura-violet-1), transparent 58%);
+}
+.results-aura.gold-mint {
+  background:
+    radial-gradient(circle at 30% 20%, var(--aura-gold-1), transparent 62%),
+    radial-gradient(circle at 78% 82%, var(--aura-mint-1), transparent 58%);
+}
+.results-stat-value {
+  position: relative;
+  font-size: clamp(44px, 4.6vw, 64px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+.results-stat-label {
+  position: relative;
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 12px;
+}
+/* on cosmic the aura lightens the card into --ink-3's own tonal range */
+html[data-palette="cosmic"] .results-stat-label {
+  color: var(--ink-2);
+}
+
+/* Before → After + sticky video */
+.results-ba {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 56px;
+  align-items: start;
+}
+.results-ba-col {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+.results-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.results-tag {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.results-tag.after {
+  color: var(--accent-ink);
+}
+.results-frame {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 0.5px solid var(--line);
+  box-shadow: 0 8px 26px rgba(28, 19, 12, 0.08);
+}
+.results-frame.lift {
+  box-shadow: 0 18px 44px rgba(28, 19, 12, 0.16);
+}
+.results-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.results-arrow {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+  color: var(--accent);
+}
+.results-arrow svg {
+  width: 22px;
+  height: 22px;
+}
+
+.results-sticky {
+  position: sticky;
+  /* clears the 18px-offset floating navbar */
+  top: 104px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.results-video-shell {
+  border-radius: 24px;
+  overflow: hidden;
+  padding: 10px;
+  background: var(--paper);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 0.5px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 24px 60px rgba(28, 19, 12, 0.14);
+}
+.results-video-shell video {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* source is square — never force a 9:16 box or object-fit: cover */
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  background: var(--video-mat);
+}
+
+/* How I work */
+.results-process-block {
+  margin-top: 120px;
+}
+.results-process-block .results-rail {
+  margin-bottom: 64px;
+}
+.results-process {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+.results-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.results-step:nth-child(2) {
+  margin-top: 56px;
+}
+.results-step:nth-child(3) {
+  margin-top: 96px;
+}
+.results-step:nth-child(4) {
+  margin-top: 132px;
+}
+.results-step-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.results-step-frame {
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 0.5px solid var(--line);
+  box-shadow: 0 14px 36px rgba(28, 19, 12, 0.12);
+  background: #fff;
+}
+.results-step-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.results-step-caption {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
 /* ── Mobile responsive ── */
 @media (max-width: 900px) {
   .nav {
@@ -1422,5 +1659,81 @@ html[data-palette="cosmic"] .nav-palette {
   .float-card,
   .mascot .body {
     animation: none !important;
+  }
+}
+
+/* ── Results responsive (descending — later blocks win) ── */
+@media (max-width: 1080px) {
+  .results-ba {
+    grid-template-columns: 1fr 320px;
+    gap: 36px;
+  }
+  .results-process {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 36px 24px;
+  }
+  .results-step:nth-child(2),
+  .results-step:nth-child(3),
+  .results-step:nth-child(4) {
+    margin-top: 0;
+  }
+}
+
+/*
+ * A fixed-attachment background plus a full-viewport blend layer forces a
+ * full-page repaint on every scroll frame on mobile. Biggest scroll-jank fix.
+ */
+@media (max-width: 900px), (hover: none) {
+  body {
+    background-attachment: scroll;
+  }
+  body::before {
+    position: absolute;
+    height: 100%;
+  }
+}
+
+@media (max-width: 860px) {
+  .results-ba {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .results-sticky {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .results-stats {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .results-stat {
+    padding: 28px 20px;
+  }
+  .results-process {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  /* 20px blur over large areas is a real cost on mobile GPUs */
+  .results-stat,
+  .results-video-shell {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  /* keep the anchors reachable on mobile as a scrollable row */
+  .nav-links {
+    display: flex;
+    overflow-x: auto;
+    flex: 1;
+    min-width: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-links a {
+    flex: none;
   }
 }

@@ -6,6 +6,7 @@ import { Mascot } from "@/components/Mascot";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { WorkSection } from "@/components/sections/WorkSection";
+import { Results } from "@/components/sections/Results";
 import { Contact } from "@/components/sections/Contact";
 import { workSections } from "@/content/site";
 
@@ -31,6 +32,7 @@ export function AppShell() {
       {workSections.map((ws) => (
         <WorkSection key={ws.slug} {...ws} />
       ))}
+      <Results />
       <Contact />
     </>
   );

@@ -104,6 +104,12 @@ type Project = {
 - `ffmpeg-static` is a devDependency for local transcoding (resolve path via `require('ffmpeg-static')`); do NOT add it to `pnpm-workspace.yaml` allowBuilds (it breaks `pnpm dev`/`pnpm lint`).
 - Front preview uses `/videos/previews/{slug}-{n}.mp4` (4s, 540p, silent, crf 32); previews idle-preload (`preload="auto"` via requestIdleCallback after window load) on desktop only, skipped when `navigator.connection.saveData`; back-face video mounts with `preload="metadata"` once card is within 200px of viewport (IntersectionObserver); mobile ≤720px fetches zero video bytes on page load; run `node scripts/encode-previews.mjs` after adding new source videos.
 
+## Layout gotchas
+
+- `html, body` use `overflow-x: clip`, **not** `hidden`. `hidden` computes `overflow-y` to `auto`, making html/body scroll containers, which silently breaks every viewport-relative `position: sticky` on the page (the Results analytics column). Don't switch it back.
+- Palette-aware color: use `--ink`/`--ink-2`/`--ink-3`/`--accent`/`--accent-ink`/`--line`/`--line-2`/`--paper` rather than warm hexes. `--accent-ink` is the text-contrast accent (the display `--accent` is too light to read at label sizes). Shadows stay literal `rgba(28,19,12,…)` — no token exists and the rest of the file does the same.
+- `--ink-3` labels sitting on top of an aura layer go illegible in the cosmic palette; bump to `--ink-2` under `html[data-palette="cosmic"]`.
+
 ## OG / link previews
 
 - OG image is the **static hero screenshot** at `public/og/og.jpg`, **2400×1260** (2× of 1200×630) so it stays sharp on retina — declare `width: 2400, height: 1260`. Do not use a generated `opengraph-image.tsx` card.
