@@ -117,7 +117,7 @@ type Project = {
 ## OG / link previews
 
 - OG image is the **static hero screenshot** at `public/og/og.jpg`, **2400×1260** (2× of 1200×630) so it stays sharp on retina — declare `width: 2400, height: 1260`. Do not use a generated `opengraph-image.tsx` card.
-- `metadataBase` and `openGraph.url` must use the **www** origin (`https://www.kartavyagupta.com`) — the apex 301-redirects, and a redirected `og:image` URL trips some crawlers.
+- `metadataBase` and `openGraph.url` must use the **www** origin (`https://www.kartavya.studio`) — the apex 301-redirects, and a redirected `og:image` URL trips some crawlers.
 - After changing OG assets, LinkedIn caches hard (~up to 7 days). Re-scrape via Post Inspector with the **www** URL; the inspector preview renders small so looks softer than a real feed card.
 
 ## CLAUDE.md Update Protocol

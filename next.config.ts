@@ -1,6 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      "kartavya.studio",
+      "kartavyagupta.com",
+      "www.kartavyagupta.com",
+    ].map((host) => ({
+      source: "/:path*",
+      has: [{ type: "host" as const, value: host }],
+      destination: "https://www.kartavya.studio/:path*",
+      permanent: true,
+    }));
+  },
   async headers() {
     return [
       {

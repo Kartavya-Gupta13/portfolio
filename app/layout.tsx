@@ -29,14 +29,14 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.kartavyagupta.com"),
+  metadataBase: new URL("https://www.kartavya.studio"),
   title: "Kartavya Gupta — Content Strategist",
   description:
     "Content strategist who actually executes. Research, ideation, scripting, editing, distribution — full lifecycle across YouTube, Instagram, TikTok, X & LinkedIn.",
   openGraph: {
     title: "Kartavya Gupta — Content Strategist",
     description: "A strategist who can actually execute.",
-    url: "https://www.kartavyagupta.com",
+    url: "https://www.kartavya.studio",
     siteName: "Kartavya Gupta",
     type: "website",
     images: [
