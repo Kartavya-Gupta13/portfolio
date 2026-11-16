@@ -79,7 +79,7 @@ export const results = {
   videoLabel: "Analytics",
   video: {
     src: "/videos/results.mp4",
-    poster: "/images/posters/results.jpg",
+    poster: "/images/posters/results.webp",
     width: 600,
     height: 600,
   },

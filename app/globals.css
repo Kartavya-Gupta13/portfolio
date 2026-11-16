@@ -293,7 +293,7 @@ html[data-palette="cosmic"] .nav-links a:hover {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background-image: url("/images/portrait.jpg");
+  background-image: url("/images/avatar-mini.webp");
   background-size: cover;
   background-position: 40% 40%;
   border: 1.5px solid rgba(255, 255, 255, 0.9);

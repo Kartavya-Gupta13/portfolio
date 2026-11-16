@@ -37,7 +37,7 @@ export function WorkCard({
   const slug = kind.toLowerCase().replace(/ /g, "-");
   const computedSrc = `/videos/${slug}-${num}.mp4`;
   const previewSrc = `/videos/previews/${slug}-${num}.mp4`;
-  const poster = `/images/posters/${slug}-${num}.jpg`;
+  const poster = `/images/posters/${slug}-${num}.webp`;
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 720);
