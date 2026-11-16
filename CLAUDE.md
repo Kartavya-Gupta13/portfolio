@@ -123,3 +123,8 @@ type Project = {
 ## CLAUDE.md Update Protocol
 
 After every correction or new constraint discovered during development, update this file with the rule. This prevents repeating the same mistake. Format: brief rule, no explanation needed unless non-obvious.
+
+## Deploy
+
+- Domain: `www.kartavya.studio` (DNS at Squarespace: `A @ 76.76.21.21`, `CNAME www cname.vercel-dns.com`; keep Google MX/SPF/DKIM records). Apex + old `kartavyagupta.com` 308 → www via `redirects()` in `next.config.ts`.
+- Vercel build can fail with `module-not-found` in `[next]/internal/font/google/*.module.css` — transient Google Fonts fetch error, not code. `vercel redeploy <url> --target production`.
