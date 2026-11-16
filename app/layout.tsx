@@ -30,11 +30,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.kartavya.studio"),
-  title: "Kartavya Gupta — Content Strategist",
+  title: "Kartavya Gupta — DFY Organic Content",
   description:
-    "Content strategist who actually executes. Research, ideation, scripting, editing, distribution — full lifecycle across YouTube, Instagram, TikTok, X & LinkedIn.",
+    "DFY organic content, actually executed. Research, ideation, scripting, editing, distribution — full lifecycle across YouTube, Instagram, TikTok, X & LinkedIn.",
   openGraph: {
-    title: "Kartavya Gupta — Content Strategist",
+    title: "Kartavya Gupta — DFY Organic Content",
     description: "A strategist who can actually execute.",
     url: "https://www.kartavya.studio",
     siteName: "Kartavya Gupta",
@@ -44,13 +44,13 @@ export const metadata: Metadata = {
         url: "/og/og.jpg",
         width: 2400,
         height: 1260,
-        alt: "Kartavya Gupta — Content Strategist",
+        alt: "Kartavya Gupta — DFY Organic Content",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kartavya Gupta — Content Strategist",
+    title: "Kartavya Gupta — DFY Organic Content",
     description: "A strategist who can actually execute.",
     images: ["/og/og.jpg"],
   },

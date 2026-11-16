@@ -1,7 +1,7 @@
 export const site = {
   name: "Kartavya Gupta",
-  role: "Content Strategist",
-  tagline: "content strategist",
+  role: "DFY Organic Content",
+  tagline: "DFY Organic Content",
   email: "kartavya.gupta013@gmail.com",
   linkedin: "https://www.linkedin.com/in/kartavya-z/",
   skills: [

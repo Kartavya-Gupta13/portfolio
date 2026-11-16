@@ -145,7 +145,7 @@ export function Hero({
         <div className="hero-name">
           <span className="avatar-mini" />
           <span className="ping" />
-          <span>Kartavya Gupta · content strategist</span>
+          <span>Kartavya Gupta · DFY Organic Content</span>
         </div>
 
         <h1>
